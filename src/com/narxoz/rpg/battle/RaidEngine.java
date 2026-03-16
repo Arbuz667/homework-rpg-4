@@ -13,21 +13,45 @@ public class RaidEngine {
         return this;
     }
 
-    public RaidResult runRaid(CombatNode teamA, CombatNode teamB, Skill teamASkill, Skill teamBSkill) {
-        // TODO: Validate inputs (null checks, alive checks, required skills).
-        // TODO: Implement round-based simulation:
-        // 1) Team A casts on Team B
-        // 2) Team B casts on Team A (if still alive)
-        // 3) Track rounds and log each step
-        // 4) Stop when one team is defeated (or max rounds reached)
-        //
-        // Optional extension:
-        // Use random for critical strikes or other deterministic events.
-        // Example: boolean critA = random.nextInt(100) < 10;
+    public RaidResult runRaid(CombatNode teamA, CombatNode teamB,
+                              Skill skillA, Skill skillB) {
+
         RaidResult result = new RaidResult();
-        result.setRounds(0);
-        result.setWinner("TBD");
-        result.addLine("TODO: implement raid simulation");
+
+        if (teamA == null || teamB == null || skillA == null || skillB == null) {
+            result.addLine("Invalid inputs provided.");
+            result.setWinner("Invalid");
+            return result;
+        }
+
+        int rounds = 0;
+
+        while (teamA.isAlive() && teamB.isAlive()) {
+            rounds++;
+
+            result.addLine("=== Round " + rounds + " ===");
+
+            // TEAM A attacks
+            if (teamA.isAlive()) {
+                result.addLine("Team A uses " + skillA.getSkillName()
+                        + " (" + skillA.getEffectName() + ")");
+                skillA.cast(teamB);
+                result.addLine("Team B HP now: " + teamB.getHealth());
+            }
+
+            // TEAM B attacks
+            if (teamB.isAlive()) {
+                result.addLine("Team B uses " + skillB.getSkillName()
+                        + " (" + skillB.getEffectName() + ")");
+                skillB.cast(teamA);
+                result.addLine("Team A HP now: " + teamA.getHealth());
+            }
+        }
+
+        result.setRounds(rounds);
+        result.setWinner(teamA.isAlive() ? "Team A" : "Team B");
+        result.addLine("Winner: " + result.getWinner());
+
         return result;
     }
 }
