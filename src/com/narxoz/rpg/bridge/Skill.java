@@ -1,5 +1,5 @@
 package com.narxoz.rpg.bridge;
-
+// Skill class updated to enable git commit
 import com.narxoz.rpg.composite.CombatNode;
 
 public abstract class Skill {
